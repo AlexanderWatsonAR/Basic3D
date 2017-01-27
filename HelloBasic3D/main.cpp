@@ -1,4 +1,3 @@
-#define REFRESHRATE 16
 #include "HelloBasic3D.h"
 
 int main(int argc, char* argv[])
