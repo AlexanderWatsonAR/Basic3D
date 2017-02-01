@@ -3,80 +3,47 @@
 
 namespace Basic3D
 {
-#define DEFAULT_CLEARCOLOUR Colour(0.5f, 0.8f, 0.9f, 1.0f) // Sky Blue.
-#define DEFAULT_PERSPECTIVE Perspective(45, 1, 0.1, 500) // Aspect assumes window is square.
-#define ONE_SECOND 1000 // ms.
-
 	namespace Director
 	{
 		namespace
 		{
-			Camera* _activeCamera = nullptr;
-			Scene* _scene = nullptr;
+			Scene * _scene = nullptr;
+			Colour * _clearColour = nullptr;
 			std::vector<SceneObject*> _objects;
 			std::vector<Lighting> _lights;
-			Perspective* _perspective = nullptr;
-			Colour* _clearColour = nullptr;
-			int _viewportWidth, _viewportHeight;
 		}
 
 		void Destroy();
 		void Display();
-		void Keyboard(unsigned char key, int x, int y);
-		void Reshape(int width, int height);
-		void MousePress(int button, int state, int x, int y);
-		void MouseMove(int x, int y);
 		void Tick(int preferredRefresh);
 		void Update(int updateTime);
 
 		void Director::Initialise(int argc, char *argv[], Scene * initScene, int windowX, int windowY,
-								  int viewportWidth, int viewportHeight, Perspective* perspective,
-								  Colour* clearColour, const char * windowTitle, int preferredFPS)
+								  int viewportWidth, int viewportHeight, Colour* clearColour,
+								  const char * windowTitle, int preferredFPS)
 		{
-			int refreshRate = ONE_SECOND / preferredFPS;
+			int refreshRate = 1000 / preferredFPS;
 			_scene = initScene;
-			_viewportWidth = viewportWidth;
-			_viewportHeight = viewportHeight;
 
 			glutInitDisplayMode(GLUT_DOUBLE);
-			glutInit(&argc, argv);
-			glutInitWindowSize(_viewportWidth, _viewportHeight);
+			glutInit(&argc, argv);	
+			glutInitWindowSize(viewportWidth, viewportHeight);
 			glutInitWindowPosition(windowX, windowY);
-
 			glutCreateWindow(windowTitle);
 			glutDisplayFunc(Display);
-			glutTimerFunc(refreshRate, Director::Tick, refreshRate);
-			glutReshapeFunc(Reshape);
-			glutKeyboardFunc(Keyboard);
-			glutMouseFunc(MousePress);
-			glutMotionFunc(MouseMove);
+			glutTimerFunc(refreshRate, Director::Tick, refreshRate);		
+
 			if (clearColour != nullptr)
 			{
 				_clearColour = clearColour;
 			}
 			else
 			{
-				_clearColour = new DEFAULT_CLEARCOLOUR;
+				_clearColour = new Colour(0.5f, 0.8f, 0.9f, 1.0f);
 			}
 
 			glClearColor(_clearColour->r, _clearColour->g, _clearColour->b, _clearColour->a);
 			glShadeModel(GL_SMOOTH);
-			glLoadIdentity();
-			glMatrixMode(GL_PROJECTION);
-			glViewport(0, 0, _viewportWidth, _viewportHeight);
-			if (perspective != nullptr)
-			{
-				_perspective = perspective;
-			}
-			else
-			{
-				if (_viewportHeight != _viewportWidth)
-					_perspective = new Perspective(DEFAULT_PERSPECTIVE.fieldOfView, _viewportWidth / (GLdouble)_viewportHeight, DEFAULT_PERSPECTIVE.nearPlane, DEFAULT_PERSPECTIVE.farPlane);
-				else
-					_perspective = new DEFAULT_PERSPECTIVE;
-			}
-
-			gluPerspective(_perspective->fieldOfView, _perspective->aspect, _perspective->nearPlane, _perspective->farPlane);
 
 			glMatrixMode(GL_MODELVIEW);
 			glEnable(GL_DEPTH_TEST);
@@ -84,7 +51,6 @@ namespace Basic3D
 			glEnable(GL_TEXTURE);
 			glEnable(GL_TEXTURE_2D);
 			glEnable(GL_NORMALIZE);
-			//glEnable(GL_LIGHT0); -- lights enabled when a light is added 
 			glEnable(GL_LIGHTING);
 			glCullFace(GL_BACK);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -95,7 +61,7 @@ namespace Basic3D
 			glutMainLoop();
 		}
 
-		void Director::AddChild(GLuint meshID, GLuint texID, Material material)
+		void Director::AddChild(GLuint meshID, GLuint * texID, Material material)
 		{
 			SceneObject * child = new SceneObject(meshID, texID, material);
 			child->scale = Vector3(1.0f, 1.0f, 1.0f);
@@ -145,34 +111,19 @@ namespace Basic3D
 			return _objects[index];
 		}
 
-		void Director::SetActiveCamera(Camera* camera)
-		{
-			_activeCamera = camera;
-		}
-
-		Camera * Director::GetActiveCamera()
-		{
-			return _activeCamera;
-		}
-
-		Perspective * Director::GetPerspective()
-		{
-			return _perspective;
-		}
-
 		Colour* Director::GetClearColour()
 		{
 			return _clearColour;
 		}
 
-		int Director::GetViewportHeight()
-		{
-			return _viewportHeight;
-		}
-
 		int Director::GetViewportWidth()
 		{
-			return _viewportWidth;
+			return CameraManager::GetViewportWidth();
+		}
+
+		int Director::GetViewportHeight()
+		{
+			return CameraManager::GetViewportHeight();
 		}
 
 		// Private Director Functions
@@ -181,6 +132,7 @@ namespace Basic3D
 			int updateTime = glutGet(GLUT_ELAPSED_TIME);
 			Update(updateTime);
 			updateTime = glutGet(GLUT_ELAPSED_TIME) - updateTime;
+			glutPostRedisplay();
 			glutTimerFunc(preferredRefresh - updateTime, Director::Tick, preferredRefresh);
 		}
 
@@ -194,9 +146,7 @@ namespace Basic3D
 		{
 			EmptyScene();
 			delete _scene;
-			delete _activeCamera;
 			delete _clearColour;
-			delete _perspective;
 		}
 
 		void RemoveChildren()
@@ -214,17 +164,6 @@ namespace Basic3D
 				_lights.clear();
 		}
 
-		void Reshape(int width, int height)
-		{
-			_viewportHeight = height;
-			_viewportWidth = width;
-			glLoadIdentity();
-			glMatrixMode(GL_PROJECTION);
-			glViewport(0, 0, _viewportWidth, _viewportHeight);
-			gluPerspective(_perspective->fieldOfView, width / (GLdouble)height, _perspective->nearPlane, _perspective->farPlane);
-			glMatrixMode(GL_MODELVIEW);
-		}
-
 		void Display()
 		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -234,18 +173,14 @@ namespace Basic3D
 			for (auto sceneObject : _objects)
 				Draw::DrawModel(sceneObject);
 
-			glFlush();
 			glutSwapBuffers();
 		}
+
 		void Update(int updateTime)
 		{
 			glLoadIdentity();
 
 			_scene->Update(updateTime);
-
-			gluLookAt(_activeCamera->eye.x, _activeCamera->eye.y, _activeCamera->eye.z,
-				_activeCamera->center.x, _activeCamera->center.y, _activeCamera->center.z,
-				_activeCamera->up.x, _activeCamera->up.y, _activeCamera->up.z);
 
 			for (auto light : _lights)
 			{
@@ -254,23 +189,6 @@ namespace Basic3D
 				glLightfv(light.lightNumber, GL_SPECULAR, &light.Specular.x);
 				glLightfv(light.lightNumber, GL_POSITION, &light.Position.x);
 			}
-
-			glutPostRedisplay();
-		}
-
-		void Keyboard(unsigned char key, int x, int y)
-		{
-			_scene->Keyboard(key, x, y);
-		}
-
-		void MousePress(int button, int state, int x, int y)
-		{
-			_scene->MousePress(button, state, x, y);
-		}
-
-		void MouseMove(int x, int y)
-		{
-			_scene->MouseMove(x, y);
 		}
 	}
 }

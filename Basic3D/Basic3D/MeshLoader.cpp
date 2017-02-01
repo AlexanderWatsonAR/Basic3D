@@ -199,6 +199,18 @@ namespace Basic3D
 							currentIndices.push_back(indices);
 						}
 						break;
+					case 'o':
+						ss.str("");
+						ss.clear();
+						ss << line;
+
+						ss >> tempString;
+						ss >> tempString;
+						mesh.meshNames.push_back(tempString);
+
+						std::vector<GLushort> indices;
+						currentIndices.push_back(indices);
+						break;
 					}
 				}
 			}

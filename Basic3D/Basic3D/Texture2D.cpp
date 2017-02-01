@@ -6,10 +6,12 @@ namespace Basic3D
 {
 	Texture2D::Texture2D()
 	{
+		_ID = new GLuint();
 	}
 	Texture2D::~Texture2D()
 	{
-		glDeleteTextures(1, &_ID);
+		glDeleteTextures(1, _ID);
+		delete _ID;
 	}
 	void Texture2D::Load(const char * path)
 	{
@@ -22,8 +24,8 @@ namespace Basic3D
 				SOIL_LOAD_AUTO
 				);
 
-		glGenTextures(1, &_ID); //Get next Texture ID
-		glBindTexture(GL_TEXTURE_2D, _ID); //Bind the texture to the ID
+		glGenTextures(1, _ID); //Get next Texture ID
+		glBindTexture(GL_TEXTURE_2D, *_ID); //Bind the texture to the ID
 
 			//Note that TGA files are stored as BGR(A) - So we need to specify the format as GL_BGR(A)_EXT
 		if (channels == 4)
@@ -45,7 +47,7 @@ namespace Basic3D
 	{
 		return _height;
 	}
-	GLuint Texture2D::GetID() const
+	GLuint * Texture2D::GetID() const
 	{
 		return _ID;
 	}

@@ -20,8 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basic3D.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraManager.h" />
     <ClInclude Include="Director.h" />
     <ClInclude Include="Draw.h" />
+    <ClInclude Include="Input.h" />
     <ClInclude Include="MaterialLoader.h" />
     <ClInclude Include="MeshLoader.h" />
     <ClInclude Include="Scene.h" />
@@ -34,8 +37,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Basic3D.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="Director.cpp" />
     <ClCompile Include="Draw.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="MaterialLoader.cpp" />
     <ClCompile Include="MeshLoader.cpp" />
     <ClCompile Include="Scene.cpp" />

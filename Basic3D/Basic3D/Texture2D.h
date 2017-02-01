@@ -12,14 +12,14 @@ namespace Basic3D
 	{
 	private:
 		int _width, _height;
-		GLuint _ID;
+		GLuint *_ID;
 	public:
 		Texture2D();
 		~Texture2D();
 		void Load(const char* path);
 		int GetWidth() const;
 		int GetHeight() const;
-		GLuint GetID() const;
+		GLuint * GetID() const;
 	};
 }
 

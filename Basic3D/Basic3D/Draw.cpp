@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <iostream>
 #include "Draw.h"
 
 namespace Basic3D
@@ -8,9 +9,7 @@ namespace Basic3D
 		void Draw::DrawModel(const SceneObject * sceneObject)
 		{
 			Mesh * mesh = MeshLoader::GetMesh(sceneObject->meshID);
-			glBindTexture(GL_TEXTURE_2D, sceneObject->texID);
-			//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glBindTexture(GL_TEXTURE_2D, *sceneObject->texID);
 
 			glMaterialfv(GL_FRONT, GL_AMBIENT, &sceneObject->material.Ambient.x);
 			glMaterialfv(GL_FRONT, GL_SPECULAR, &sceneObject->material.Specular.x);
@@ -53,7 +52,7 @@ namespace Basic3D
 			glDisable(GL_LIGHTING);
 			glColor3f(0.0f, 0.0f, 0.0f);
 			glTranslatef(position.x, position.y, position.z);
-			glRasterPos2f(10.0f, 10.0f);
+			glRasterPos2f(0.0f, 0.0f);
 			glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24, (unsigned char*)text);
 			glEnable(GL_LIGHTING);
 			glEnable(GL_TEXTURE);
