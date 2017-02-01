@@ -19,6 +19,6 @@ public:
 	void LoadContent();
 	void Update(int timeStep);
 	void Draw();
-	void Keyboard(unsigned char key, int x, int y);
+	void Keyboard(Input::KeyboardState * state);
 };
 

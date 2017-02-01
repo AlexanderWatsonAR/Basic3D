@@ -1,4 +1,2 @@
 ﻿  HelloBasic3D.cpp
-c:\users\alex\onedrive\documents\hellobasic3d\hellobasic3d.cpp(23): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\alex\onedrive\documents\hellobasic3d\hellobasic3d.cpp(82): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
   HelloBasic3D.vcxproj -> C:\Users\Alex\OneDrive\Documents\HelloBasic3D\Debug\HelloBasic3D.exe

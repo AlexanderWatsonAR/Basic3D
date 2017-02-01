@@ -10,9 +10,6 @@ namespace Basic3D
 		virtual ~Scene();
 		virtual void LoadContent() = 0;
 		virtual void Update(int elapsedTime) = 0;
-		virtual void Keyboard(unsigned char key, int x, int y) {}
 		virtual void Draw() {}
-		virtual void MousePress(int button, int state, int x, int y) {}
-		virtual void MouseMove(int x, int y) {}
 	};
 }

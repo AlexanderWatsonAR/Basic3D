@@ -11,8 +11,11 @@
 #include <GL/GLU.h> //OpenGL Utilities
 #include "GL/freeglut.h" //freeglut library
 
+#include "Camera.h"
+#include "CameraManager.h"
 #include "Director.h"
 #include "Draw.h"
+#include "Input.h"
 #include "MaterialLoader.h"
 #include "MeshLoader.h"
 #include "Scene.h"
@@ -23,6 +26,7 @@ namespace Basic3D
 {
 	class BASIC3D_API Vector2
 	{
+	public:
 		GLfloat x;
 		GLfloat y;
 
@@ -40,19 +44,34 @@ namespace Basic3D
 		Vector3() {}
 		Vector3(GLfloat x, GLfloat y, GLfloat z) : x(x), y(y), z(z) {}
 
-		inline Vector3 operator- (const Vector3 &vector) const
+		inline Vector3 operator- (const Vector3 &subtract) const
 		{
-			return Vector3(vector.x - x, vector.y - y, vector.z - z);
+			return Vector3(subtract.x - x, subtract.y - y, subtract.z - z);
 		}
 
-		inline Vector3 operator+ (const Vector3 &vector) const
+		inline Vector3 operator+ (const Vector3 &add) const
 		{
-			return Vector3(vector.x + x, vector.y + y, vector.z + z);
+			return Vector3(add.x + x, add.y + y, add.z + z);
 		}
 
-		inline Vector3 operator* (const Vector3 &vector) const
+		inline Vector3 operator* (const Vector3 &multiply) const
 		{
-			return Vector3(vector.x * x, vector.y * y, vector.z * z);
+			return Vector3(multiply.x * x, multiply.y * y, multiply.z * z);
+		}
+
+		inline Vector3 operator- (const GLfloat &subtract) const
+		{
+			return Vector3(subtract - x, subtract - y, subtract - z);
+		}
+
+		inline Vector3 operator+ (const GLfloat &add) const
+		{
+			return Vector3(add + x, add + y, add + z);
+		}
+
+		inline Vector3 operator* (const GLfloat &multiply) const
+		{
+			return Vector3(multiply * x, multiply * y, multiply * z);
 		}
 
 		inline bool operator== (const Vector3 &vector) const
@@ -81,13 +100,6 @@ namespace Basic3D
 		float x, y, z, w;
 		Vector4() {}
 		Vector4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
-	};
-	
-	class BASIC3D_API Camera
-	{
-	public:
-		Vector3 eye, center, up;
-		Camera() : eye(0.0f, 0.0f, 0.0f), center(0.0f, 0.0f, 0.0f), up(0.0f, 1.0f, 0.0f) {}
 	};
 
 	struct BASIC3D_API Colour
@@ -153,7 +165,7 @@ namespace Basic3D
 	class BASIC3D_API SceneObject
 	{
 	public:
-		GLuint texID;
+		GLuint * texID;
 		GLuint meshID;
 		Material material;
 		Vector3 position;
@@ -162,7 +174,7 @@ namespace Basic3D
 		GLfloat pitch;
 		GLfloat roll;
 
-		SceneObject(GLuint meshID, GLuint texID, Material material) : meshID(meshID), texID(texID), material(material) {}
+		SceneObject(GLuint meshID, GLuint * texID, Material material) : meshID(meshID), texID(texID), material(material) {}
 	};
 
 	struct BASIC3D_API Vertex
