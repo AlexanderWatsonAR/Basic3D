@@ -5,7 +5,6 @@ namespace Basic3D
 {
 	class Perspective;
 	class Vector3;
-
 	class BASIC3D_API Camera
 	{
 	public:
