@@ -61,10 +61,9 @@ namespace Basic3D
 			glutMainLoop();
 		}
 
-		void Director::AddChild(GLuint meshID, GLuint * texID, Material material)
+		void Director::AddChild(GLuint meshID, Texture2D * tex, Material material)
 		{
-			SceneObject * child = new SceneObject(meshID, texID, material);
-			child->scale = Vector3(1.0f, 1.0f, 1.0f);
+			SceneObject * child = new SceneObject(meshID, tex, material);
 			_objects.push_back(child);
 		}
 
@@ -132,7 +131,6 @@ namespace Basic3D
 			int updateTime = glutGet(GLUT_ELAPSED_TIME);
 			Update(updateTime);
 			updateTime = glutGet(GLUT_ELAPSED_TIME) - updateTime;
-			glutPostRedisplay();
 			glutTimerFunc(preferredRefresh - updateTime, Director::Tick, preferredRefresh);
 		}
 
@@ -189,6 +187,8 @@ namespace Basic3D
 				glLightfv(light.lightNumber, GL_SPECULAR, &light.Specular.x);
 				glLightfv(light.lightNumber, GL_POSITION, &light.Position.x);
 			}
+
+			glutPostRedisplay();
 		}
 	}
 }

@@ -48,6 +48,11 @@ namespace Basic3D
 			_activeCamera = _cameras[camName];
 		}
 
+		Camera * GetActiveCamera()
+		{
+			return _activeCamera;
+		}
+
 		void UpdateActiveCamera()
 		{
 			_activeCamera->LookAt();

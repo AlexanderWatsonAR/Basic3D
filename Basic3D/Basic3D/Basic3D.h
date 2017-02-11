@@ -7,8 +7,8 @@
 #endif
 
 #include <Windows.h> //Required for OpenGL on Windows
-#include <GL/GL.h> //OpenGL
-#include <GL/GLU.h> //OpenGL Utilities
+#include <gl/GL.h> //OpenGL
+#include <gl/GLU.h> //OpenGL Utilities
 #include "GL/freeglut.h" //freeglut library
 
 #include "Camera.h"
@@ -32,6 +32,8 @@ namespace Basic3D
 
 		Vector2() {}
 		Vector2(GLfloat x, GLfloat y) : x(x), y(y) {}
+
+		static GLfloat Angle(Vector2 camPos, Vector2 boardPos);
 	};
 
 	class BASIC3D_API Vector3
@@ -42,55 +44,33 @@ namespace Basic3D
 		GLfloat z;
 
 		Vector3() {}
+		Vector3(GLfloat value) : x(value), y(value), z(value) {}
 		Vector3(GLfloat x, GLfloat y, GLfloat z) : x(x), y(y), z(z) {}
 
-		inline Vector3 operator- (const Vector3 &subtract) const
-		{
-			return Vector3(subtract.x - x, subtract.y - y, subtract.z - z);
-		}
+		// Right hand opearators. 
+		Vector3 & operator-=  (const Vector3 & rVec);
+		Vector3 & operator+=  (const Vector3 & rVec);
+		Vector3 & operator*=  (const Vector3 & rVec);
+		Vector3 & operator/=  (const Vector3 & rVec);
+		Vector3 & operator=   (const Vector3 & rVal);
+		Vector3 & operator-=  (const GLfloat & rVal);
+		Vector3 & operator+=  (const GLfloat & rVal);
+		Vector3 & operator*=  (const GLfloat & rVal);
+		Vector3 & operator/=  (const GLfloat & rVal);
+		Vector3 & operator=   (const GLfloat & rVal);
 
-		inline Vector3 operator+ (const Vector3 &add) const
-		{
-			return Vector3(add.x + x, add.y + y, add.z + z);
-		}
-
-		inline Vector3 operator* (const Vector3 &multiply) const
-		{
-			return Vector3(multiply.x * x, multiply.y * y, multiply.z * z);
-		}
-
-		inline Vector3 operator- (const GLfloat &subtract) const
-		{
-			return Vector3(subtract - x, subtract - y, subtract - z);
-		}
-
-		inline Vector3 operator+ (const GLfloat &add) const
-		{
-			return Vector3(add + x, add + y, add + z);
-		}
-
-		inline Vector3 operator* (const GLfloat &multiply) const
-		{
-			return Vector3(multiply * x, multiply * y, multiply * z);
-		}
-
-		inline bool operator== (const Vector3 &vector) const
-		{
-			if (vector.x == x && vector.y == y && vector.z == z)
-				return true;
-			return false;
-		}
-
-		inline bool operator!= (const Vector3 &vector) const
-		{
-			if (vector.x != x && vector.y != y && vector.z != z)
-				return true;
-			return false;
-		}
+		const Vector3 operator- (const Vector3 &subtract) const;
+		const Vector3 operator+ (const Vector3 &add) const;
+		const Vector3 operator* (const Vector3 &multiply) const;
+		const Vector3 operator/ (const Vector3 &divide) const;
+		const Vector3 operator- (const GLfloat &subtract) const;
+		const Vector3 operator+ (const GLfloat &add) const;
+		const Vector3 operator* (const GLfloat &multiply) const;
+		const Vector3 operator/ (const GLfloat &divide) const;
 
 		GLfloat Angle3D(const Vector3 &vector);
 		Vector3 Direction(const Vector3 &vector);
-		GLfloat Distance(const Vector3 &vector);
+		GLfloat Length(const Vector3 &vector);
 		GLfloat DotProduct(const Vector3 &vector);
 	};
 
@@ -141,31 +121,28 @@ namespace Basic3D
 	class BASIC3D_API BoundingBox
 	{
 	public:
-		Vector3 top, bottom, left, right, back, front;
+		Vector3 position;
+		Vector3 minCoords, maxCoords;
+	
+		BoundingBox(GLuint meshID);
+		BoundingBox(GLfloat size);
+		BoundingBox(GLfloat width, GLfloat height, GLfloat depth);
 
-		inline BoundingBox operator() (const Vector3 &position, const Vector3 &minCoords, const Vector3 &maxCoords)
-		{
-			left = Vector3(position.x + minCoords.x, position.y, position.z);
-			right = Vector3(position.x + maxCoords.x, position.y, position.z);
-			front = Vector3(position.x, position.y, position.z + maxCoords.z);
-			back = Vector3(position.x, position.y, position.z + minCoords.z);
-			bottom = Vector3(position.x, position.y + minCoords.y, position.z);
-			top = Vector3(position.x, position.y + maxCoords.y, position.z);
+		Vector3 Left();
+		Vector3 Right();
+		Vector3 Bottom();
+		Vector3 Top();
+		Vector3 Front();
+		Vector3 Back();
 
-			BoundingBox box;
-			box.top = top;
-			box.bottom = bottom;
-			box.left = left;
-			box.right = right;
-			box.front = front;
-			return box;
-		}
+		bool Contains(Vector3 point); // AARB.
+		bool Intersects(BoundingBox* box);
 	};
 
 	class BASIC3D_API SceneObject
 	{
 	public:
-		GLuint * texID;
+		Texture2D * tex;
 		GLuint meshID;
 		Material material;
 		Vector3 position;
@@ -173,8 +150,25 @@ namespace Basic3D
 		GLfloat heading;
 		GLfloat pitch;
 		GLfloat roll;
+		BoundingBox* box;
+		bool billboard;
 
-		SceneObject(GLuint meshID, GLuint * texID, Material material) : meshID(meshID), texID(texID), material(material) {}
+		SceneObject(GLuint meshID, Texture2D * tex, Material material);
+		SceneObject(GLuint meshID, Texture2D * tex, Material material, Vector3 position);
+		SceneObject(GLuint meshID, Texture2D * tex, Material material,
+					Vector3 position, Vector3 scale, GLfloat heading,
+					GLfloat pitch, GLfloat roll, BoundingBox* box,
+					bool billboard);
+	};
+
+	class BASIC3D_API SGnode
+	{
+	public:
+		SceneObject* object;
+		SGnode* child;
+		SGnode* parent;
+		SGnode() : object(nullptr), child(nullptr), parent(nullptr) {}
+		SGnode(SceneObject* object) : object(object), child(nullptr), parent(nullptr) {}
 	};
 
 	struct BASIC3D_API Vertex

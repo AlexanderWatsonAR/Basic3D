@@ -1,1 +1,17 @@
-﻿
+﻿  stdafx.cpp
+  dllmain.cpp
+  Texture2D.cpp
+  Scene.cpp
+  MeshLoader.cpp
+  MaterialLoader.cpp
+  Input.cpp
+  Draw.cpp
+  Director.cpp
+  CameraManager.cpp
+  Camera.cpp
+  Basic3D.cpp
+  Generating Code...
+     Creating library C:\Users\Alex\OneDrive\Documents\DLL\Basic3D\Debug\Basic3D.lib and object C:\Users\Alex\OneDrive\Documents\DLL\Basic3D\Debug\Basic3D.exp
+  Generating code
+  Finished generating code
+  Basic3D.vcxproj -> C:\Users\Alex\OneDrive\Documents\DLL\Basic3D\Debug\Basic3D.dll

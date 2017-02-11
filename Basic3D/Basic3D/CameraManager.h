@@ -14,7 +14,8 @@ namespace Basic3D
 		BASIC3D_API Camera* RetrieveCamera(char * camName);
 		BASIC3D_API void DeleteCamera(char * camName);
 		BASIC3D_API void SetActiveCamera(char * camName);
-		BASIC3D_API void SetActiveCamera(char * camera);
+		BASIC3D_API void SetActiveCamera(char * camName);
+		BASIC3D_API Camera * GetActiveCamera();
 		BASIC3D_API void UpdateActiveCamera();
 		int GetViewportWidth();
 		int GetViewportHeight();
