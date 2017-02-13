@@ -9,8 +9,12 @@ class HelloBasic3D : public Scene
 {
 private:
 	SceneObject* ground;
-	SGnode* nodes[2];
-	SceneObject* crates[2];
+	SceneObject* grandParent;
+	SceneObject* parent;
+	SceneObject* child;
+
+	Model* groundModel;
+	Model* crateModel;
 	Camera* cam;
 	GLuint cubeMeshID;
 	GLuint planeMeshID;
