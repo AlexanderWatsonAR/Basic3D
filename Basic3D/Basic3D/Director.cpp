@@ -61,12 +61,6 @@ namespace Basic3D
 			glutMainLoop();
 		}
 
-		void Director::AddChild(GLuint meshID, Texture2D * tex, Material material)
-		{
-			SceneObject * child = new SceneObject(meshID, tex, material);
-			_objects.push_back(child);
-		}
-
 		void Director::AddChild(SceneObject* child)
 		{
 			_objects.push_back(child);

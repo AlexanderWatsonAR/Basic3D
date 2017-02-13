@@ -5,79 +5,16 @@ namespace Basic3D
 {
 	namespace Draw
 	{
-		void DrawSGnodes(SGnode* node)
-		{
-			SceneObject* sceneObject = node->object;
-			Mesh * mesh = MeshLoader::GetMesh(sceneObject->meshID);
-			glBindTexture(GL_TEXTURE_2D, *sceneObject->tex->GetID());
-
-			glMaterialfv(GL_FRONT, GL_AMBIENT, &sceneObject->material.Ambient.x);
-			glMaterialfv(GL_FRONT, GL_SPECULAR, &sceneObject->material.Specular.x);
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, &sceneObject->material.Diffuse.x);
-			glMaterialf(GL_FRONT, GL_SHININESS, sceneObject->material.Shininess);
-
-			glEnableClientState(GL_VERTEX_ARRAY);
-			glEnableClientState(GL_NORMAL_ARRAY);
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-			glPushMatrix();
-
-			if (node->parent != nullptr)
-			{
-				glTranslatef(node->parent->object->position.x, node->parent->object->position.y, node->parent->object->position.z);
-				glScalef(node->parent->object->scale.x, node->parent->object->scale.y, node->parent->object->scale.z);
-				glRotatef(node->parent->object->heading, 0, 1, 0);
-				glRotatef(node->parent->object->pitch, 1, 0, 0);
-				glRotatef(node->parent->object->roll, 0, 0, 1);
-			}
-
-			glTranslatef(sceneObject->position.x, sceneObject->position.y, sceneObject->position.z);
-			glScalef(sceneObject->scale.x, sceneObject->scale.y, sceneObject->scale.z);
-			glRotatef(sceneObject->heading, 0, 1, 0);
-			glRotatef(sceneObject->pitch, 1, 0, 0);
-			glRotatef(sceneObject->roll, 0, 0, 1);
-
-			for (unsigned int i = 0; i < mesh->indices.size(); i++)
-			{
-				glVertexPointer(3, GL_FLOAT, 0, &mesh->vertices[0]);
-				glNormalPointer(GL_FLOAT, 0, &mesh->normals[0]);
-				glTexCoordPointer(2, GL_FLOAT, 0, &mesh->texCoords[0]);
-
-				glDrawElements(GL_TRIANGLES, mesh->indices[i].size(), GL_UNSIGNED_SHORT, &mesh->indices[i][0]);
-			}
-
-			glPopMatrix();
-
-			glDisableClientState(GL_VERTEX_ARRAY);
-			glDisableClientState(GL_NORMAL_ARRAY);
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-			if (node->child != nullptr)
-				Draw::DrawSGnodes(node->child);
-		}
-
-		void Draw::DrawModel(GLuint meshID, Texture2D* tex, Material material)
-		{
-			Draw::DrawModel(new SceneObject(meshID, tex, material));
-		}
-
-		void Draw::DrawModel(GLuint meshID, Texture2D* tex, Material material,
-					   Vector3 position, Vector3 scale, GLfloat heading,
-					   GLfloat pitch, GLfloat roll, BoundingBox* box,
-					   bool billboard)
-		{
-			Draw::DrawModel(new SceneObject(meshID, tex, material, position, scale, heading, pitch, roll, box, billboard));
-		}
-
 		void Draw::DrawModel(SceneObject * sceneObject)
 		{
-			Mesh * mesh = MeshLoader::GetMesh(sceneObject->meshID);
-			glBindTexture(GL_TEXTURE_2D, *sceneObject->tex->GetID());
+			Model* model = sceneObject->model;
+			Mesh * mesh = MeshLoader::GetMesh(model->meshID);
+			glBindTexture(GL_TEXTURE_2D, *model->tex->GetID());
 
-			glMaterialfv(GL_FRONT, GL_AMBIENT, &sceneObject->material.Ambient.x);
-			glMaterialfv(GL_FRONT, GL_SPECULAR, &sceneObject->material.Specular.x);
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, &sceneObject->material.Diffuse.x);
-			glMaterialf(GL_FRONT, GL_SHININESS, sceneObject->material.Shininess);
+			glMaterialfv(GL_FRONT, GL_AMBIENT, &model->material.Ambient.x);
+			glMaterialfv(GL_FRONT, GL_SPECULAR, &model->material.Specular.x);
+			glMaterialfv(GL_FRONT, GL_DIFFUSE, &model->material.Diffuse.x);
+			glMaterialf(GL_FRONT, GL_SHININESS, model->material.Shininess);
 
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glEnableClientState(GL_NORMAL_ARRAY);
@@ -85,11 +22,14 @@ namespace Basic3D
 
 			glPushMatrix();
 
-			glTranslatef(sceneObject->position.x, sceneObject->position.y, sceneObject->position.z);
-			glScalef(sceneObject->scale.x, sceneObject->scale.y, sceneObject->scale.z);
-			glRotatef(sceneObject->heading, 0, 1, 0);
-			glRotatef(sceneObject->pitch, 1, 0, 0);
-			glRotatef(sceneObject->roll, 0, 0, 1);
+			SceneObject* parent = sceneObject->parent;
+			while (parent != nullptr)
+			{
+				parent->transform->Update();
+				parent = parent->parent;
+			}
+
+			sceneObject->transform->Update();
 
 			for (unsigned int i = 0; i < mesh->indices.size(); i++)
 			{
@@ -105,6 +45,12 @@ namespace Basic3D
 			glDisableClientState(GL_VERTEX_ARRAY);
 			glDisableClientState(GL_NORMAL_ARRAY);
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+			for (int i = 0; i < 5; i++)
+			{
+				if (sceneObject->children[i] != nullptr)
+					Draw::DrawModel(sceneObject->children[i]);
+			}
 		}
 
 		void Draw::DrawString(const char* text, Colour colour, Vector3 position, Vector2 rasterPos)

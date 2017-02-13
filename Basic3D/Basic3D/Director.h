@@ -19,7 +19,6 @@ namespace Basic3D
 									int viewportWidth, int viewportHeight, Colour* clearColour,
 									const char * windowTitle, int preferredFPS);
 		BASIC3D_API void ReplaceScene(Scene* newScene);
-		BASIC3D_API void AddChild(GLuint meshID, Texture2D * tex, Material material);
 		BASIC3D_API void AddChild(SceneObject* child);
 		BASIC3D_API void AddLight(Lighting light);
 		BASIC3D_API void EmptyScene();

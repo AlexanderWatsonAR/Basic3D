@@ -139,36 +139,44 @@ namespace Basic3D
 		bool Intersects(BoundingBox* box);
 	};
 
-	class BASIC3D_API SceneObject
+	class BASIC3D_API Model
 	{
 	public:
-		Texture2D * tex;
 		GLuint meshID;
+		Texture2D * tex;
 		Material material;
+
+		Model(GLuint meshID, Texture2D * tex, Material material);
+	};
+
+	class BASIC3D_API Transform
+	{
+	public:
 		Vector3 position;
 		Vector3 scale;
 		GLfloat heading;
 		GLfloat pitch;
 		GLfloat roll;
+
+		Transform();
+		Transform(Vector3 position, Vector3 scale, GLfloat heading, GLfloat pitch, GLfloat roll);
+
+		virtual void Update(); // Perform transformations here.
+	};
+
+	class BASIC3D_API SceneObject
+	{
+	public:
+		SceneObject* parent;
+		SceneObject* children[5]; // Statically allocated 5 children for each child.
+
+		Model* model;
+		Transform* transform;
 		BoundingBox* box;
 		bool billboard;
 
-		SceneObject(GLuint meshID, Texture2D * tex, Material material);
-		SceneObject(GLuint meshID, Texture2D * tex, Material material, Vector3 position);
-		SceneObject(GLuint meshID, Texture2D * tex, Material material,
-					Vector3 position, Vector3 scale, GLfloat heading,
-					GLfloat pitch, GLfloat roll, BoundingBox* box,
-					bool billboard);
-	};
-
-	class BASIC3D_API SGnode
-	{
-	public:
-		SceneObject* object;
-		SGnode* child;
-		SGnode* parent;
-		SGnode() : object(nullptr), child(nullptr), parent(nullptr) {}
-		SGnode(SceneObject* object) : object(object), child(nullptr), parent(nullptr) {}
+		SceneObject(Model* model, Transform* transform);
+		SceneObject(Model* model, Transform* transform, BoundingBox* box, bool billboard);
 	};
 
 	struct BASIC3D_API Vertex

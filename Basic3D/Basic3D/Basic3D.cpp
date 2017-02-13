@@ -258,28 +258,42 @@ namespace Basic3D
 		return false;
 	}
 
-	SceneObject::SceneObject(GLuint meshID, Texture2D * tex, Material material) :
-							 meshID(meshID), tex(tex), material(material),
-							 position(0.0f, 0.0f, 0.0f), scale(1.0f, 1.0f, 1.0f),
-							 heading(0.0f), pitch(0.0f), roll(0.0f), box(nullptr),
-							 billboard(false)
+	Model::Model(GLuint meshID, Texture2D * tex, Material material) : meshID(meshID), tex(tex), material(material)
 	{
 	}
 
-	SceneObject::SceneObject(GLuint meshID, Texture2D * tex, Material material, Vector3 position) :
-							 meshID(meshID), tex(tex), material(material),
-							 position(position), scale(1.0f, 1.0f, 1.0f),
-							 heading(0.0f), pitch(0.0f), roll(0.0f), box(nullptr),
-							 billboard(false)
+	Transform::Transform() : position(0.0f, 0.0f, 0.0f), scale(1.0f, 1.0f, 1.0f), heading(0.0f), pitch(0.0f), roll(0.0f)
 	{
 	}
 
-	SceneObject::SceneObject(GLuint meshID, Texture2D * texID, Material material,
-							 Vector3 position, Vector3 scale, GLfloat heading,
-							 GLfloat pitch, GLfloat roll, BoundingBox* box, bool billboard) :
-							 meshID(meshID), tex(tex), material(material),
-							 position(position), scale(scale), heading(heading),
-							 pitch(pitch), roll(roll), box(box), billboard(billboard)
+	Transform::Transform(Vector3 position, Vector3 scale, GLfloat heading, GLfloat pitch, GLfloat roll) : position(position), scale(scale), heading(heading), pitch(pitch), roll(roll)
 	{
+	}
+
+	void Transform::Update()
+	{
+		glTranslatef(position.x, position.y, position.z);
+		glScalef(scale.x, scale.y, scale.z);
+		glRotatef(heading, 0, 1, 0);
+		glRotatef(pitch, 1, 0, 0);
+		glRotatef(roll, 0, 0, 1);
+	}
+
+	SceneObject::SceneObject(Model * model, Transform * transform) : model(model), transform(transform), box(nullptr),
+																	 billboard(false), parent(nullptr)
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			children[i] = nullptr;
+		}
+	}
+
+	SceneObject::SceneObject(Model * model, Transform * transform, BoundingBox * box, bool billboard) : model(model), transform(transform), box(box),
+																										billboard(billboard), parent(nullptr)
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			children[i] = nullptr;
+		}
 	}
 }
