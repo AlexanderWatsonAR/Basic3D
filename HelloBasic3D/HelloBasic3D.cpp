@@ -14,22 +14,29 @@ HelloBasic3D::HelloBasic3D(int argc, char* argv[]) : Scene(argc, argv)
 
 HelloBasic3D::~HelloBasic3D()
 {
-	delete crateTexture;
+	delete crateTexture[0];
+	delete crateTexture[1];
 	delete groundTexture;
 	delete ground;
 	delete crateModel;
 	delete groundModel;
-	delete grandParent;
-	delete parent;
-	delete child;
+	for (int i = 0; i < SCENE_OBJECT_CHILD_COUNT; i++)
+	{
+		delete stickMan->children[i];
+	}
+	delete stickMan;
 	delete cam;
 }
 
 void HelloBasic3D::LoadContent()
 {
-	crateTexture = new Texture2D();
-	crateTexture->HasMipMaps(true);
-	crateTexture->Load("Textures/crate.bmp");
+	crateTexture[0] = new Texture2D();
+	crateTexture[0]->HasMipMaps(true);
+	crateTexture[0]->Load("Textures/crate.bmp");
+
+	crateTexture[1] = new Texture2D();
+	crateTexture[1]->HasMipMaps(true);
+	crateTexture[1]->Load("Textures/crate_1.jpg");
 
 	groundTexture = new Texture2D();
 	groundTexture->IsRepeated(true);
@@ -44,20 +51,37 @@ void HelloBasic3D::LoadContent()
 	material.Specular = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
 	material.Shininess = 10;
 
-	crateModel = new Model(cubeMeshID, crateTexture, material);
+	crateModel = new Model(cubeMeshID, crateTexture[0], material);
 	groundModel = new Model(planeMeshID, groundTexture, material);
 
 	Transform* groundTransform = new Transform();
 	groundTransform->position = Vector3(0.0f, -1.0f, -10.0f);
 
-	Transform* grandParentTransform = new Transform();
-	grandParentTransform->position = Vector3(0.0f, 0.0f, -5.0f);
+	Transform* origin = new Transform();
+	origin->position = Vector3(0.0f, 0.0f, -15.0f);
 
-	Transform* parentTransform = new Transform();
-	parentTransform->position = Vector3(0.0f, 0.0f, -6.0f);
+	Transform* rightLeg = new Transform();
+	rightLeg->position = Vector3(0.5f, 0.0f, 0.0f);
+	rightLeg->scale = Vector3(0.4f, 1.0f, 0.5f);
 
-	Transform* childTransform = new Transform();
-	childTransform->position = Vector3(0.0f, 0.0f, -7.0f);
+	Transform* leftLeg = new Transform();
+	leftLeg->position = Vector3(-0.5f, 0.0f, 0.0f);
+	leftLeg->scale = Vector3(0.4f, 1.0f, 0.5f);
+
+	Transform* body = new Transform();
+	body->position = Vector3(0.0f, 2.0f, 0.0f);
+
+	Transform* rightArm = new Transform();
+	rightArm->position = Vector3(1.3f, 2.0f, 0.0f);
+	rightArm->scale = Vector3(0.3f, 0.75f, 0.5f);
+
+	Transform* leftArm = new Transform();
+	leftArm->position = Vector3(-1.3f, 2.0f, 0.0f);
+	leftArm->scale = Vector3(0.3f, 0.75f, 0.5f);
+
+	Transform* Head = new Transform();
+	Head->position = Vector3(0.0f, 3.5f, 0.0f);
+	Head->scale = Vector3(0.5f, 0.5f, 0.5f);
 
 	Lighting light01;
 	light01.Ambient = Vector4(0.7f, 0.5f, 0.5f, 1.0f);
@@ -68,32 +92,37 @@ void HelloBasic3D::LoadContent()
 
 	Perspective* p = new Perspective(45, 1, 0.1, 250);
 
-	CameraManager::AddCamera(new Camera(new Vector3(0.0f, 3.0f, 0.0f), new Vector3(0.0f, 0.0f, -8.0f), new Vector3(0.0f, 1.0f, 0.0f), p, "Main"));
-	CameraManager::AddCamera(new Camera(new Vector3(0.0f, 20.0f, -9.0f), new Vector3(0.0f, 0.0f, -8.0f), new Vector3(0.0f, 1.0f, 0.0f), p, "TopView"));
+	CameraManager::AddCamera(new Camera(new Vector3(0.0f, 5.0f, 0.0f), new Vector3(0.0f, 4.0f, -10.0f), new Vector3(0.0f, 1.0f, 0.0f), p, "Main"));
+	CameraManager::AddCamera(new Camera(new Vector3(0.0f, 20.0f, -7.0f), new Vector3(0.0f, 0.0f, -8.0f), new Vector3(0.0f, 1.0f, 0.0f), p, "TopView"));
 	CameraManager::AddCamera(new Camera(new Vector3(-8.0f, 0.0f, -10.0f), new Vector3(0.0f, 0.0f, -8.0f), new Vector3(0.0f, 1.0f, 0.0f), p, "LeftView"));
-	CameraManager::AddCamera(new Camera(new Vector3(0.0f, 3.0f, 10.0f), new Vector3(0.0f, 0.0f, -8.0f), new Vector3(0.0f, 1.0f, 0.0f), p, "Back"));
+	CameraManager::AddCamera(new Camera(new Vector3(0.0f, 3.0f, -25.0f), new Vector3(0.0f, 0.0f, -8.0f), new Vector3(0.0f, 1.0f, 0.0f), p, "Back"));
 	CameraManager::SetActiveCamera("Main");
 
 	ground = new SceneObject(groundModel, groundTransform);
-	grandParent = new SceneObject(crateModel, grandParentTransform);
-	parent = new SceneObject(crateModel, parentTransform);
-	child = new SceneObject(crateModel, childTransform);
+	stickMan = new SceneObject(nullptr, origin);
+	stickMan->children[0] = new SceneObject(crateModel, rightLeg);
+	stickMan->children[1] = new SceneObject(crateModel, leftLeg);
+	stickMan->children[2] = new SceneObject(crateModel, body);
+	stickMan->children[3] = new SceneObject(crateModel, rightArm);
+	stickMan->children[4] = new SceneObject(crateModel, leftArm);
+	stickMan->children[5] = new SceneObject(crateModel, Head);
 
-	grandParent->children[0] = parent;
-	parent->parent = grandParent;
-	parent->children[0] = child;
-	child->parent = parent;
+	for (int i = 0; i < SCENE_OBJECT_CHILD_COUNT; i++)
+	{
+		stickMan->children[i]->parent = stickMan;
+	}
 
 	CameraManager::Initialise();
 	Input::Initialise();
 
 	Director::AddLight(light01);
 	Director::AddChild(ground);
+	Director::AddChild(stickMan);
 }
 
 void HelloBasic3D::Draw()
 {
-	Draw::DrawModel(grandParent);
+	//Draw::DrawString("This is some text", Colour(1.0f, 0.0f, 0.0f, 0.0f), Vector2(20.0f, 20.0f));
 }
 
 void HelloBasic3D::Keyboard(Input::KeyboardState * state)
@@ -120,42 +149,42 @@ void HelloBasic3D::Keyboard(Input::KeyboardState * state)
 
 	if (state->IsKeyDown(Input::Keys::W))
 	{
-		grandParent->transform->position.z -= 0.1f;
+		stickMan->transform->position.z -= 0.1f;
 	}
 
 	if (state->IsKeyDown(Input::Keys::S))
 	{
-		grandParent->transform->position.z += 0.1f;
+		stickMan->transform->position.z += 0.1f;
 	}
 
 	if (state->IsKeyDown(Input::Keys::A))
 	{
-		grandParent->transform->position.x -= 0.1f;
+		stickMan->transform->position.x -= 0.1f;
 	}
 
 	if (state->IsKeyDown(Input::Keys::D))
 	{
-		grandParent->transform->position.x += 0.1f;
+		stickMan->transform->position.x += 0.1f;
 	}
 
 	if (state->IsKeyDown(Input::Keys::Z))
 	{
-		grandParent->transform->position.y -= 0.1f;
+		stickMan->transform->position.y -= 0.1f;
 	}
 
 	if (state->IsKeyDown(Input::Keys::X))
 	{
-		grandParent->transform->position.y += 0.1f;
+		stickMan->transform->position.y += 0.1f;
 	}
 
 	if (state->IsKeyDown(Input::Keys::LEFT))
 	{
-		grandParent->transform->heading -= 0.5f;
+		stickMan->transform->heading -= 0.5f;
 	}
 
 	if (state->IsKeyDown(Input::Keys::RIGHT))
 	{
-		grandParent->transform->heading += 0.5f;
+		stickMan->transform->heading += 0.5f;
 	}
 }
 

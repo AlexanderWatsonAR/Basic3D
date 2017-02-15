@@ -5,13 +5,26 @@
 using namespace std;
 using namespace Basic3D;
 
+class ParentTransformation : public Transform
+{
+public:
+	ParentTransformation() : Transform() {}
+
+	inline void Update()
+	{
+		glTranslatef(position.x, position.y, position.z);
+		glScalef(scale.x, scale.y, scale.z);
+		glRotatef(heading, 0, 1, 0);
+		glRotatef(pitch, 1, 0, 0);
+		glRotatef(roll, 0, 0, 1);
+	}
+};
+
 class HelloBasic3D : public Scene
 {
 private:
 	SceneObject* ground;
-	SceneObject* grandParent;
-	SceneObject* parent;
-	SceneObject* child;
+	SceneObject* stickMan;
 
 	Model* groundModel;
 	Model* crateModel;
@@ -19,7 +32,7 @@ private:
 	GLuint cubeMeshID;
 	GLuint planeMeshID;
 	Material material;
-	Texture2D* crateTexture;
+	Texture2D* crateTexture [2];
 	Texture2D* groundTexture;
 
 public:
