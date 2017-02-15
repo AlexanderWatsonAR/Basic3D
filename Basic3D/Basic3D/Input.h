@@ -1,8 +1,7 @@
 #pragma once
 #include "Basic3D.h"
-
-#include <vector>
 #include <array>
+#include <vector>
 
 namespace Basic3D
 {

@@ -157,24 +157,15 @@ namespace Basic3D
 		return acosf(DotProduct(vector));
 	}
 
-	GLfloat Vector3::Length(const Vector3 &vector)
+	GLfloat Vector3::Length()
 	{
-		Vector3 dis = vector - Vector3(x, y, z);
-
-		GLfloat hyp = sqrtf(pow(dis.x, 2) + pow(dis.y, 2) + pow(dis.z, 2));
-
+		GLfloat hyp = sqrtf(pow(x, 2) + pow(y, 2) + pow(z, 2));
 		return hyp;
 	}
 
-	Vector3 Vector3::Direction(const Vector3 &vector)
+	Vector3 Vector3::Normal()
 	{
-		Vector3 dis = vector - Vector3(x, y, z);
-
-		GLfloat hyp = sqrtf(pow(dis.x, 2) + pow(dis.y, 2) + pow(dis.z, 2));
-
-		Vector3 dir = dis / hyp;
-
-		return dir;
+		return Vector3(x, y, z) / Length();
 	}
 
 	BoundingBox::BoundingBox(GLuint meshID)
@@ -282,7 +273,7 @@ namespace Basic3D
 	SceneObject::SceneObject(Model * model, Transform * transform) : model(model), transform(transform), box(nullptr),
 																	 billboard(false), parent(nullptr)
 	{
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < SCENE_OBJECT_CHILD_COUNT; i++)
 		{
 			children[i] = nullptr;
 		}
@@ -291,7 +282,7 @@ namespace Basic3D
 	SceneObject::SceneObject(Model * model, Transform * transform, BoundingBox * box, bool billboard) : model(model), transform(transform), box(box),
 																										billboard(billboard), parent(nullptr)
 	{
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < SCENE_OBJECT_CHILD_COUNT; i++)
 		{
 			children[i] = nullptr;
 		}

@@ -24,6 +24,8 @@
 
 namespace Basic3D
 {
+#define SCENE_OBJECT_CHILD_COUNT 6
+
 	class BASIC3D_API Vector2
 	{
 	public:
@@ -69,8 +71,8 @@ namespace Basic3D
 		const Vector3 operator/ (const GLfloat &divide) const;
 
 		GLfloat Angle3D(const Vector3 &vector);
-		Vector3 Direction(const Vector3 &vector);
-		GLfloat Length(const Vector3 &vector);
+		Vector3 Normal();
+		GLfloat Length();
 		GLfloat DotProduct(const Vector3 &vector);
 	};
 
@@ -168,7 +170,7 @@ namespace Basic3D
 	{
 	public:
 		SceneObject* parent;
-		SceneObject* children[5]; // Statically allocated 5 children for each child.
+		SceneObject* children[SCENE_OBJECT_CHILD_COUNT]; // Statically allocated children for each child.
 
 		Model* model;
 		Transform* transform;
