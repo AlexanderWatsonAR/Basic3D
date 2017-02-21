@@ -144,14 +144,11 @@
   <ItemGroup>
     <ClCompile Include="HelloBasic3D.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Transforms.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HelloBasic3D.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Textures\crate.bmp">
-      <DeploymentContent>true</DeploymentContent>
-    </Image>
+    <ClInclude Include="Transforms.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

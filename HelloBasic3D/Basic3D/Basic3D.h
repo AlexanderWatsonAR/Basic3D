@@ -11,6 +11,7 @@
 #include <gl/GLU.h> //OpenGL Utilities
 #include "GL/freeglut.h" //freeglut library
 
+#include "BasicMath.h"
 #include "Camera.h"
 #include "CameraManager.h"
 #include "Director.h"
@@ -24,7 +25,7 @@
 
 namespace Basic3D
 {
-#define SCENE_OBJECT_CHILD_COUNT 6
+#define SCENE_OBJECT_CHILD_COUNT 50
 
 	class BASIC3D_API Vector2
 	{
@@ -156,14 +157,25 @@ namespace Basic3D
 	public:
 		Vector3 position;
 		Vector3 scale;
-		GLfloat heading;
-		GLfloat pitch;
-		GLfloat roll;
+		GLfloat heading, pitch, roll;
 
 		Transform();
 		Transform(Vector3 position, Vector3 scale, GLfloat heading, GLfloat pitch, GLfloat roll);
 
 		virtual void Update(); // Perform transformations here.
+	};
+
+	class BASIC3D_API Billboard : public Transform
+	{
+	public:
+		Vector3 position;
+		Vector3 scale;
+		GLfloat heading, pitch, roll;
+
+		Billboard();
+		Billboard(Vector3 position, Vector3 scale, GLfloat heading, GLfloat pitch, GLfloat roll);
+
+		void Update();
 	};
 
 	class BASIC3D_API SceneObject
@@ -175,7 +187,6 @@ namespace Basic3D
 		Model* model;
 		Transform* transform;
 		BoundingBox* box;
-		bool billboard;
 
 		SceneObject(Model* model, Transform* transform);
 		SceneObject(Model* model, Transform* transform, BoundingBox* box, bool billboard);

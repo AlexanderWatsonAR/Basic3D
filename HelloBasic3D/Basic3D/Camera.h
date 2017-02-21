@@ -13,7 +13,6 @@ namespace Basic3D
 		const char * name;
 
 		Camera(Vector3* eye, Vector3* center, Vector3* up, Perspective* perspective, char * camName);
-		virtual ~Camera();
 		virtual void Update();
 		void LookAt();
 		void Reshape(int width, int height);
