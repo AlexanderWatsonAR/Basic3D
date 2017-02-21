@@ -1,7 +1,5 @@
 #include "stdafx.h"
 #include "Basic3D.h"
-#include <math.h>
-#include <iostream>
 
 namespace Basic3D
 {
@@ -271,7 +269,7 @@ namespace Basic3D
 	}
 
 	SceneObject::SceneObject(Model * model, Transform * transform) : model(model), transform(transform), box(nullptr),
-																	 billboard(false), parent(nullptr)
+																	 parent(nullptr)
 	{
 		for (int i = 0; i < SCENE_OBJECT_CHILD_COUNT; i++)
 		{
@@ -280,11 +278,32 @@ namespace Basic3D
 	}
 
 	SceneObject::SceneObject(Model * model, Transform * transform, BoundingBox * box, bool billboard) : model(model), transform(transform), box(box),
-																										billboard(billboard), parent(nullptr)
+																										parent(nullptr)
 	{
 		for (int i = 0; i < SCENE_OBJECT_CHILD_COUNT; i++)
 		{
 			children[i] = nullptr;
 		}
+	}
+
+	Billboard::Billboard() : Transform()
+	{
+	}
+
+	Billboard::Billboard(Vector3 position, Vector3 scale, GLfloat heading, GLfloat pitch, GLfloat roll) : Transform(position, scale, heading, pitch, roll)
+	{
+	}
+
+	void Billboard::Update()
+	{
+		Camera* cam = CameraManager::GetActiveCamera();
+		glTranslatef(position.x, position.y, position.z);
+		glScalef(scale.x, scale.y, scale.z);
+		glRotatef(90.0f, 1, 0, 0);
+
+		GLfloat rotation = Vector2::Angle(Vector2(cam->eye->x, cam->eye->z), Vector2(position.x, position.z));
+		rotation = BasicMath::RadiansToDegrees(rotation);
+		rotation = -rotation;
+		glRotatef(rotation, 0, 0, 1);
 	}
 }

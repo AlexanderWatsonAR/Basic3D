@@ -7,10 +7,6 @@ namespace Basic3D
 	{
 	}
 
-	Camera::~Camera()
-	{
-	}
-
 	void Camera::LookAt()
 	{
 		glLoadIdentity();

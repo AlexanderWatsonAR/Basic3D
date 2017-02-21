@@ -1,12 +1,13 @@
 #include "stdafx.h"
 #include "Draw.h"
+#include <vector>
 
 namespace Basic3D
 {
 	namespace Draw
 	{
 		void Draw(SceneObject* sceneObject); // Draws the children.
-		void Transform(SceneObject* sceneObject); // Transform around the parent(s).
+		void Transformation(SceneObject* sceneObject); // Transform around the parent(s).
 
 		void Draw::DrawModel(SceneObject * sceneObject)
 		{
@@ -15,7 +16,7 @@ namespace Basic3D
 			if (model == nullptr)
 			{
 				glPushMatrix();
-				Transform(sceneObject);
+				Transformation(sceneObject);
 				glPopMatrix();
 				Draw(sceneObject);
 				return;
@@ -35,7 +36,7 @@ namespace Basic3D
 
 			glPushMatrix();
 
-			Transform(sceneObject);
+			Transformation(sceneObject);
 
 			for (unsigned int i = 0; i < mesh->indices.size(); i++)
 			{
@@ -127,19 +128,32 @@ namespace Basic3D
 		{
 			for (int i = 0; i < SCENE_OBJECT_CHILD_COUNT; i++)
 			{
-				if (sceneObject->children[i] != nullptr)
-					Draw::DrawModel(sceneObject->children[i]);
+				if (sceneObject->children[i] == nullptr)
+					break;
+				Draw::DrawModel(sceneObject->children[i]);
 			}
 		}
 
-		void Transform(SceneObject* sceneObject)
+		void Transformation(SceneObject* sceneObject)
 		{
+			std::vector<SceneObject*> parents;
+
 			SceneObject* parent = sceneObject->parent;
+			
 			while (parent != nullptr)
 			{
-				parent->transform->Update();
+				parents.push_back(parent);
 				parent = parent->parent;
 			}
+
+			if (!parents.empty())
+			{
+				for (int i = parents.size()-1; i > -1; i--)
+				{
+					parents[i]->transform->Update();
+				}
+			}
+
 			sceneObject->transform->Update(); //Local Transformations.
 		}
 	}

@@ -63,6 +63,9 @@
     <ClInclude Include="CameraManager.h">
       <Filter>Header Files\Basic3D\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="BasicMath.h">
+      <Filter>Header Files\Basic3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -103,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="CameraManager.cpp">
       <Filter>Source Files\Basic3D\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicMath.cpp">
+      <Filter>Source Files\Basic3D</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
