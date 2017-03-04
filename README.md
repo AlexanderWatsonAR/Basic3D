@@ -11,5 +11,5 @@ Basic3D is a library that simplifies creating a 3D application. The purpose of t
 5. Rendering Models
 6. Rendering 3D & 2D Text
 7. Scene Graph
-8. Axis Aligned Bounding box & Bouding Spheres.
+8. Axis Aligned Bounding box & Bounding Spheres.
 9. Input State Control.
