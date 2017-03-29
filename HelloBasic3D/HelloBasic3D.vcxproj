@@ -142,12 +142,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cameras.cpp" />
     <ClCompile Include="HelloBasic3D.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SecondScene.cpp" />
     <ClCompile Include="Transforms.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Cameras.h" />
     <ClInclude Include="HelloBasic3D.h" />
+    <ClInclude Include="SecondScene.h" />
     <ClInclude Include="Transforms.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

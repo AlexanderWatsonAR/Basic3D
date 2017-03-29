@@ -33,7 +33,7 @@ namespace Basic3D
 		GLfloat x;
 		GLfloat y;
 
-		Vector2() {}
+		Vector2() : x(0.0f), y(0.0f) {}
 		Vector2(GLfloat x, GLfloat y) : x(x), y(y) {}
 
 		static GLfloat Angle(Vector2 camPos, Vector2 boardPos);
@@ -46,21 +46,21 @@ namespace Basic3D
 		GLfloat y;
 		GLfloat z;
 
-		Vector3() {}
+		Vector3() : x(0.0f), y(0.0f), z(0.0f) {}
 		Vector3(GLfloat value) : x(value), y(value), z(value) {}
 		Vector3(GLfloat x, GLfloat y, GLfloat z) : x(x), y(y), z(z) {}
 
 		// Right hand opearators. 
-		Vector3 & operator-=  (const Vector3 & rVec);
-		Vector3 & operator+=  (const Vector3 & rVec);
-		Vector3 & operator*=  (const Vector3 & rVec);
-		Vector3 & operator/=  (const Vector3 & rVec);
-		Vector3 & operator=   (const Vector3 & rVal);
-		Vector3 & operator-=  (const GLfloat & rVal);
-		Vector3 & operator+=  (const GLfloat & rVal);
-		Vector3 & operator*=  (const GLfloat & rVal);
-		Vector3 & operator/=  (const GLfloat & rVal);
-		Vector3 & operator=   (const GLfloat & rVal);
+		Vector3 & operator-=  (const Vector3 &rVec);
+		Vector3 & operator+=  (const Vector3 &rVec);
+		Vector3 & operator*=  (const Vector3 &rVec);
+		Vector3 & operator/=  (const Vector3 &rVec);
+		Vector3 & operator=   (const Vector3 &rVal);
+		Vector3 & operator-=  (const GLfloat &rVal);
+		Vector3 & operator+=  (const GLfloat &rVal);
+		Vector3 & operator*=  (const GLfloat &rVal);
+		Vector3 & operator/=  (const GLfloat &rVal);
+		Vector3 & operator=   (const GLfloat &rVal);
 
 		const Vector3 operator- (const Vector3 &subtract) const;
 		const Vector3 operator+ (const Vector3 &add) const;
@@ -70,6 +70,10 @@ namespace Basic3D
 		const Vector3 operator+ (const GLfloat &add) const;
 		const Vector3 operator* (const GLfloat &multiply) const;
 		const Vector3 operator/ (const GLfloat &divide) const;
+		bool operator== (const Vector3 &other) const;
+		bool operator== (const GLfloat &value) const;
+		bool operator!= (const Vector3 &other) const;
+		bool operator!= (const GLfloat &value) const;
 
 		GLfloat Angle3D(const Vector3 &vector);
 		Vector3 Normal();
@@ -81,14 +85,14 @@ namespace Basic3D
 	{
 	public:
 		float x, y, z, w;
-		Vector4() {}
+		Vector4() : x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
 		Vector4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
 	};
 
 	struct BASIC3D_API Colour
 	{
 		GLfloat r, g, b, a;
-		Colour() {}
+		Colour() : r(0.0f), g(0.0f), b(0.0f), a(0.0f) {}
 		Colour(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {}
 	};
 
@@ -96,7 +100,7 @@ namespace Basic3D
 	{
 	public:
 		double fieldOfView, aspect, nearPlane, farPlane;
-		Perspective() {}
+		Perspective() : fieldOfView(0.0), aspect(0.0), nearPlane(0.0), farPlane(0.0){}
 		Perspective(double fieldOfView, double aspect, double nearPlane, double farPlane) :
 		fieldOfView(fieldOfView), aspect(aspect), nearPlane(nearPlane), farPlane(farPlane) {}
 	};
@@ -105,20 +109,20 @@ namespace Basic3D
 	{
 	public:
 		GLenum lightNumber;
-		Vector4 Ambient, Diffuse, Specular, Position;
-		Lighting() {}
+		Vector4 ambient, diffuse, specular, position;
+		Lighting() : lightNumber(GL_LIGHT0), ambient(Vector4()), diffuse(Vector4()), specular(Vector4()), position(Vector4()) {}
 		Lighting(GLenum lightNumber, Vector4 ambient, Vector4 diffuse, Vector4 specular, Vector4 position) :
-			lightNumber(lightNumber), Ambient(ambient), Diffuse(diffuse), Specular(specular), Position(position) {}
+			lightNumber(lightNumber), ambient(ambient), diffuse(diffuse), specular(specular), position(position) {}
 	};
 
 	class BASIC3D_API Material
 	{
 	public:
-		Vector4 Ambient, Diffuse, Specular;
-		GLfloat Shininess, Alpha;
-		Material() {}
-		Material(Vector4 ambient, Vector4 diffuse, Vector4 specular, GLfloat Shininess, GLfloat Alpha) :
-			Ambient(ambient), Diffuse(diffuse), Specular(specular), Shininess(Shininess), Alpha(Alpha) {}
+		Vector4 ambient, diffuse, specular;
+		GLfloat shininess, alpha;
+		Material() : ambient(Vector4()), diffuse(Vector4()), specular(Vector4()), shininess(0.0f), alpha(0.0f) {}
+		Material(Vector4 ambient, Vector4 diffuse, Vector4 specular, GLfloat shininess, GLfloat alpha) :
+			ambient(ambient), diffuse(diffuse), specular(specular), shininess(shininess), alpha(alpha) {}
 	};
 
 	class BASIC3D_API BoundingBox
@@ -149,7 +153,8 @@ namespace Basic3D
 		Texture2D * tex;
 		Material material;
 
-		Model(GLuint meshID, Texture2D * tex, Material material);
+		Model(GLuint meshName, Texture2D * tex, Material material);
+		~Model();
 	};
 
 	class BASIC3D_API Transform
@@ -157,23 +162,25 @@ namespace Basic3D
 	public:
 		Vector3 position;
 		Vector3 scale;
-		GLfloat heading, pitch, roll;
+		GLfloat pitch, heading, roll;
 
 		Transform();
-		Transform(Vector3 position, Vector3 scale, GLfloat heading, GLfloat pitch, GLfloat roll);
+		Transform(GLfloat x, GLfloat y, GLfloat z); // position.
+		Transform(Vector3 position);
+		Transform(Vector3 position, Vector3 scale);
+		Transform(Vector3 position, Vector3 scale, GLfloat pitch, GLfloat heading, GLfloat roll);
 
-		virtual void Update(); // Perform transformations here.
+		virtual void Update(); // Perform transformations here. Updated called in draw.
 	};
 
 	class BASIC3D_API Billboard : public Transform
 	{
 	public:
-		Vector3 position;
-		Vector3 scale;
-		GLfloat heading, pitch, roll;
-
 		Billboard();
-		Billboard(Vector3 position, Vector3 scale, GLfloat heading, GLfloat pitch, GLfloat roll);
+		Billboard(GLfloat x, GLfloat y, GLfloat z); // position.
+		Billboard(Vector3 position);
+		Billboard(Vector3 position, Vector3 scale);
+		Billboard(Vector3 position, Vector3 scale, GLfloat pitch, GLfloat heading, GLfloat roll);
 
 		void Update();
 	};
@@ -189,7 +196,8 @@ namespace Basic3D
 		BoundingBox* box;
 
 		SceneObject(Model* model, Transform* transform);
-		SceneObject(Model* model, Transform* transform, BoundingBox* box, bool billboard);
+		SceneObject(Model* model, Transform* transform, BoundingBox* box);
+		~SceneObject();
 	};
 
 	struct BASIC3D_API Vertex

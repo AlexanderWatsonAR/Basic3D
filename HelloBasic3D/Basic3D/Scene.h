@@ -6,7 +6,7 @@ namespace Basic3D
 	class BASIC3D_API Scene
 	{
 	public:
-		Scene(int argc, char * argv[]);
+		Scene();
 		virtual ~Scene();
 		virtual void LoadContent() = 0;
 		virtual void Update(int elapsedTime) = 0;

@@ -1,7 +1,7 @@
 # Blender v2.77 (sub 0) OBJ File: ''
 # www.blender.org
 mtllib ground.mtl
-o Plane
+o Plane15x15
 v -15.000000 0.000000 15.000000
 v 15.000000 0.000000 15.000000
 v -15.000000 0.000000 -15.000000

@@ -2,12 +2,12 @@
 #include "Basic3D\Basic3D.h"
 using namespace Basic3D;
 
-class CharacterTransform : public Transform
+class CharacterMovement : public Transform
 {
 public:
 	GLfloat walk, run;
 
-	CharacterTransform();
+	CharacterMovement();
 
 	void Foreward(); // Takes Degrees.
 	void Backward(); // Takes Degrees.
@@ -16,14 +16,22 @@ public:
 	void Run(); // Takes Degrees.
 };
 
-class AnimateTransform : public Transform
+class Joint : public Transform
 {
 public:
-	GLfloat rotate, speed;
-	bool startStop;
 	Vector3 joint; // Joint is relative to last position.
+	GLfloat jointPitch, jointHeading, jointRoll; 
+	Joint();
 
-	AnimateTransform(GLfloat speed);
+	void Update();
+};
 
+class Animate : public Joint
+{
+public:
+	GLfloat speed;
+	bool startStop;
+
+	Animate(GLfloat speed);
 	void Update();
 };

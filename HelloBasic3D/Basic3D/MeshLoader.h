@@ -1,5 +1,6 @@
 #pragma once
 #include "Basic3D.h"
+#include <string>
 
 namespace Basic3D
 {
