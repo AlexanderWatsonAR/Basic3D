@@ -3,6 +3,8 @@
 ## Description
 Basic3D is a library that simplifies creating a 3D application. The purpose of this library to create graphically low intensive 3D scenes with easy to manage scene properties. Basic3D uses Legacy OpenGL (OpenGL 3.0 to be precise); this is namely because rendering and transforming objects is simple and using advanced graphical functions is not the intent of this project. 
 
+![HelloBasic3D](https://github.com/chompAR/Basic3D/blob/master/2017-02-21.png)
+
 ## Features
 1. One Function creation of OpenGL Context Window
 2. Image Loading & Texture Binding
